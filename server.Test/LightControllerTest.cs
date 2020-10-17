@@ -18,8 +18,8 @@ namespace server.Test
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
             
             var controller = new LightController(mock.Object);
-            controller.TurnOff();
             
+            Assert.IsTrue(controller.TurnOff());
             mock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Once);
             mock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Once);
         }

@@ -32,12 +32,11 @@ namespace server
         /// <summary>
         /// Turn off all of the light Channels
         /// </summary>
-        public void TurnOff()
+        public bool TurnOff()
         {
-            foreach (var channel in _channels)
-            {
-                channel.TurnOff();
-            }
+            var success =  _channels.All(c => c.TurnOff());
+
+            return success;
         }
     }
 }
