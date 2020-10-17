@@ -1,4 +1,7 @@
-$HEADER$namespace $NAMESPACE$
+namespace server.Services
 {
-  public interface $INTERFACE$ {$END$}
+    public interface ICLIService
+    {
+        public string ExecuteCommand(string command);
+    }
 }
