@@ -24,9 +24,16 @@ namespace server
         /// <summary>
         /// Given a value, set that on the light
         /// </summary>
-        public void SetLightValue(int pctValue)
-        { 
+        public bool SetLightValue(LightPin pin, int pctValue)
+        {
+            var channel = _channels.First(c => c.Pin == pin);
+
+            if (channel == null)
+            {
+                return false;
+            }
             
+            return channel.SetChannelValue(pctValue);
         }
 
         /// <summary>
