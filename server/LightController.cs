@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 using server.Enums;
 using server.Models;
 using server.Services;
@@ -44,6 +47,29 @@ namespace server
             var success =  _channels.All(c => c.TurnOff());
 
             return success;
+        }
+
+        // public Task<bool> Sleep()
+        public bool Sleep()
+        {
+            /*
+             * TODO:-
+             * 
+             * 
+             */
+            
+            var interval = 2000;
+            
+            var timer = new Timer(interval);
+            timer.Elapsed += (sender, args) =>
+            {
+                // Every epoch, decrement brightness
+            };
+            
+            timer.AutoReset = true;
+            timer.Enabled = true;
+            
+            return false;
         }
     }
 }

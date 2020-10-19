@@ -7,10 +7,16 @@ namespace server.Models
     {
         private readonly ICLIService _service;
         private int _currentValue;
+        private readonly int _maxValue = 255;
 
         private LightPin _lightPin;
 
         public LightPin Pin => _lightPin;
+
+        public Channel()
+        {
+            _currentValue = 0;
+        }
 
         // TODO:- DI the service
         public Channel(LightPin pin, ICLIService service)
@@ -20,11 +26,27 @@ namespace server.Models
             _currentValue = 0;
         }
 
-        public bool SetChannelValue(int pctValue)
+        public bool DecrementBrightness()
+        {
+            return SetChannelValue(_currentValue - 1);
+        }
+
+        public bool IncrementBrightness()
+        {
+            return SetChannelValue(_currentValue + 1);
+        }
+
+        public bool SetChannelValuePct(int pctValue)
+        {
+            var value = (_maxValue * pctValue) / 100;
+            return SetChannelValue(value);
+        }
+
+        public virtual bool SetChannelValue(int value)
         {
             var command = Commands.SET_CHANNEL_VALUE
                 .Replace(Constants.FILLPOINT_CHANNEL_NUMBER, ((int)Pin).ToString())
-                .Replace(Constants.FILLPOINT_VALUE, pctValue.ToString());
+                .Replace(Constants.FILLPOINT_VALUE, value.ToString());
 
             var result = _service.ExecuteCommand(command);
             
