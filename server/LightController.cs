@@ -15,6 +15,8 @@ namespace server
     /// </summary>
     public class LightController
     {
+        private Timer sleepTimer;
+        
         private readonly IEnumerable<Channel> _channels;
         public LightController(ICLIService service)
         {
@@ -48,28 +50,23 @@ namespace server
 
             return success;
         }
-
-        // public Task<bool> Sleep()
-        public bool Sleep()
+        
+        public async Task Sleep(int interval = 0)
         {
-            /*
-             * TODO:-
-             * 
-             * 
-             */
+            // var interval = 2000;
             
-            var interval = 2000;
-            
-            var timer = new Timer(interval);
-            timer.Elapsed += (sender, args) =>
+            sleepTimer = new Timer(interval);
+            sleepTimer.Elapsed += (sender, args) =>
             {
                 // Every epoch, decrement brightness
+                if (!_channels.All(c => c.DecrementBrightness()))
+                {
+                    sleepTimer.Stop();
+                }
             };
             
-            timer.AutoReset = true;
-            timer.Enabled = true;
-            
-            return false;
+            sleepTimer.AutoReset = true;
+            sleepTimer.Start();
         }
     }
 }
