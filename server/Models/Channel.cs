@@ -44,6 +44,11 @@ namespace server.Models
 
         public virtual bool SetChannelValue(int value)
         {
+            if (value > _maxValue || value < 0)
+            {
+                return false;
+            }
+            
             var command = Commands.SET_CHANNEL_VALUE
                 .Replace(Constants.FILLPOINT_CHANNEL_NUMBER, ((int)Pin).ToString())
                 .Replace(Constants.FILLPOINT_VALUE, value.ToString());
@@ -53,7 +58,7 @@ namespace server.Models
             if (string.IsNullOrEmpty(result))
             {
                 // if result is OK, then we can proceed;
-                _currentValue = 0;
+                _currentValue = value;
                 return true;
             }
 
