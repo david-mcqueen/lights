@@ -94,6 +94,10 @@ namespace server.Test
             
             var controller = new Channel(LightPin.WarmWhite, mock.Object);
             
+            // Set it to be highest possible value
+            Assert.IsTrue(controller.SetChannelValue(255));
+            mock.Invocations.Clear();
+
             Assert.IsFalse(controller.SetChannelValue(256));
             Assert.IsFalse(controller.IncrementBrightness());
             
