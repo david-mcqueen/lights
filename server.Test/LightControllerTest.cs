@@ -57,9 +57,8 @@ namespace server.Test
             {
                 mock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
                 mock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
-            });
-            
-            
+            }, 1, 1);
+
         }
     }
 }
