@@ -15,7 +15,7 @@ namespace server
     /// </summary>
     public class LightController
     {
-        private Timer sleepTimer;
+        private Timer _sleepTimer;
         
         private readonly IEnumerable<Channel> _channels;
         public LightController(ICLIService service)
@@ -50,23 +50,56 @@ namespace server
 
             return success;
         }
-        
-        public async Task Sleep(int interval = 0)
+
+        private event EventHandler _sleepFinishedEvent;
+
+        /// <summary>
+        /// Starts sleeping the lights.
+        /// Calls the event after it has finished
+        /// </summary>
+        /// <param name="sleepFinishedEventHandler"></param>
+        /// <param name="interval">How long between each decrement to wait before decrementing again</param>
+        public void Sleep(EventHandler sleepFinishedEventHandler, int interval = 1)
         {
-            // var interval = 2000;
+
+            // TODO:- Should we get the interval outselves? SHould it be total duration?
+
+            CleanUpSleep();
+            _sleepFinishedEvent = sleepFinishedEventHandler;
             
-            sleepTimer = new Timer(interval);
-            sleepTimer.Elapsed += (sender, args) =>
+            _sleepTimer = new Timer(interval);
+            _sleepTimer.Elapsed += (sender, args) =>
             {
-                // Every epoch, decrement brightness
+                // Every epoch, decrement brightness. Then stop sleeping
                 if (!_channels.All(c => c.DecrementBrightness()))
                 {
-                    sleepTimer.Stop();
+                    _sleepTimer.Stop();
+                    OnSleepFinished(EventArgs.Empty);
                 }
             };
             
-            sleepTimer.AutoReset = true;
-            sleepTimer.Start();
+            _sleepTimer.AutoReset = true;
+            _sleepTimer.Start();
+        }
+
+        private void OnSleepFinished(EventArgs e)
+        {
+            EventHandler handler = _sleepFinishedEvent;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+            CleanUpSleep();
+        }
+
+        private void CleanUpSleep()
+        {
+            if (_sleepTimer != null)
+            {
+                _sleepTimer.Dispose();
+                _sleepTimer = null;
+            }
+            _sleepFinishedEvent = null;
         }
     }
 }

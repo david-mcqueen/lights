@@ -2,6 +2,7 @@ using Moq;
 using NUnit.Framework;
 using server.Enums;
 using server.Services;
+using System;
 
 namespace server.Test
 {
@@ -46,14 +47,19 @@ namespace server.Test
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
             
             var controller = new LightController(mock.Object);
-            controller.SetLightValue(LightPin.CoolWhite, 100);
-            controller.SetLightValue(LightPin.WarmWhite, 100);
+
+            // Set the lights to be the nearest off value possible
+            controller.SetLightValue(LightPin.CoolWhite, 1);
+            controller.SetLightValue(LightPin.WarmWhite, 1);
             
             mock.Invocations.Clear();
-            controller.Sleep();
+            controller.Sleep((object sender, EventArgs e) =>
+            {
+                mock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
+                mock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
+            });
             
             
-            mock.Verify(m => m.ExecuteCommand(It.IsAny<string>()), Times.Exactly(500));
         }
     }
 }
