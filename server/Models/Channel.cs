@@ -1,5 +1,6 @@
 using server.Enums;
 using server.Services;
+using System;
 
 namespace server.Models
 {
@@ -34,6 +35,27 @@ namespace server.Models
         public bool IncrementBrightness()
         {
             return SetChannelValue(_currentValue + 1);
+        }
+
+        /// <summary>
+        /// Given a duration, return the interval (ms) to turn the lights off
+        /// </summary>
+        /// <param name="duration">How long to take before reaching zero (minutes)</param>
+        /// <returns></returns>
+        public int GetIntervalToSleep(int duration)
+        {
+
+            var duration_S = duration * 60;
+            var seconds = (double)duration_S / (double)_currentValue;
+            var ms = seconds * 1000;
+
+            return (int)Math.Round(ms, 0);
+                
+        }
+
+        public bool SetChannelToMaxValue()
+        {
+            return SetChannelValue(_maxValue);
         }
 
         public bool SetChannelValuePct(int pctValue)

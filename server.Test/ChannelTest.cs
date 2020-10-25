@@ -92,16 +92,40 @@ namespace server.Test
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
             
-            var controller = new Channel(LightPin.WarmWhite, mock.Object);
+            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
             
             // Set it to be highest possible value
-            Assert.IsTrue(controller.SetChannelValue(255));
+            Assert.IsTrue(chnl.SetChannelValue(255));
             mock.Invocations.Clear();
 
-            Assert.IsFalse(controller.SetChannelValue(256));
-            Assert.IsFalse(controller.IncrementBrightness());
+            Assert.IsFalse(chnl.SetChannelValue(256));
+            Assert.IsFalse(chnl.IncrementBrightness());
             
             mock.Verify(m => m.ExecuteCommand(It.IsAny<string>()), Times.Never());
+        }
+
+        [TestCase(30,7059)] // 30 minutes. 7059 ms between each change
+        [TestCase(15, 3529)]
+        [TestCase(45, 10588)]
+        public void WhenChannelIsMaxValueAndGivenASleepDuration_ThenTheCorrectSleepIntervalIsReturned(int totalSleepDuration_Minutes, int expectedInterval_Seconds)
+        {
+            var mock = new Mock<ICLIService>();
+            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
+            chnl.SetChannelToMaxValue();
+
+            Assert.AreEqual(expectedInterval_Seconds, chnl.GetIntervalToSleep(totalSleepDuration_Minutes));
+        }
+
+        [TestCase(200, 30, 9000)] // Currently at 200. 30 mins to turn off. 9000 ms interval
+        [TestCase(100, 30, 18000)]
+        [TestCase(50, 30, 36000)]
+        public void WhenChannelIsAtAValueAndGivenASleepDuration_ThenTheCorrectSleepIntervalIsReturned(int currentValue, int totalSleepDuration_Minutes, int expectedInterval_Seconds)
+        {
+            var mock = new Mock<ICLIService>();
+            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
+            chnl.SetChannelValue(currentValue);
+
+            Assert.AreEqual(expectedInterval_Seconds, chnl.GetIntervalToSleep(totalSleepDuration_Minutes));
         }
     }
 }

@@ -59,13 +59,13 @@ namespace server
         /// </summary>
         /// <param name="sleepFinishedEventHandler"></param>
         /// <param name="interval">How long between each decrement to wait before decrementing again</param>
-        public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting, int interval)
+        public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_ms, int interval)
         {
             // TODO:- Should we get the interval outselves? SHould it be total duration?
             CleanUpSleepTimersAndHandlers();
             _sleepFinishedEvent = sleepFinishedEventHandler;
 
-            var sleepDelayTimer = new Timer(delayBeforeStarting);
+            var sleepDelayTimer = new Timer(delayBeforeStarting_ms);
             sleepDelayTimer.Elapsed += (sender, args) =>
             {
                 OnSleepStart(interval);
