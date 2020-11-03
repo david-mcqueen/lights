@@ -13,7 +13,7 @@ namespace server
     /// Controller to handle the interaction with the lights
     ///     - 
     /// </summary>
-    public class LightController
+    public class LightController: ILightController
     {
         private Timer _sleepTimer;
         
@@ -109,6 +109,11 @@ namespace server
         {
             _sleepTimer?.Dispose();
             _sleepFinishedEvent = null;
+        }
+
+        public void WakeUp(EventHandler wakeupFinishedEventHandler)
+        {
+            throw new NotImplementedException();
         }
     }
 }
