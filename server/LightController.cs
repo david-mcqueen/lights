@@ -66,7 +66,7 @@ namespace server
             CleanUpSleepTimersAndHandlers();
             _sleepFinishedEvent = sleepFinishedEventHandler;
 
-            var sleepDelayTimer = new Timer(delayBeforeStarting_ms);
+            var sleepDelayTimer = new Timer(MinutesToMS(delayBeforeStarting_m));
             sleepDelayTimer.Elapsed += (sender, args) =>
             {
                 OnSleepStart(interval);
@@ -75,6 +75,11 @@ namespace server
 
             sleepDelayTimer.AutoReset = false;
             sleepDelayTimer.Start();
+        }
+
+        public int MinutesToMS(int minutes)
+        {
+            return minutes * 60 * 1000; 
         }
 
         private void OnSleepStart(int interval)

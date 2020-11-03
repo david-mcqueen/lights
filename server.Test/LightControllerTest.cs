@@ -84,5 +84,21 @@ namespace server.Test
                 mock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
             }, 1);
         }
+
+        [TestCase(1, 60000)]
+        [TestCase(60, 3600000)]
+        [TestCase(30, 1800000)]
+        [TestCase(10, 600000)]
+        [TestCase(15, 900000)]
+        [TestCase(45, 2700000)]
+        public void WhenIntervalProvided_ThenReturnsCorrectMS(int minutes, int expected)
+        {
+            var mock = new Mock<ICLIService>();
+            mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
+
+            var controller = new LightController(mock.Object);
+
+            Assert.AreEqual(expected, controller.MinutesToMS(minutes));
+        }
     }
 }
