@@ -54,14 +54,15 @@ namespace server
         private event EventHandler _sleepFinishedEvent;
 
         /// <summary>
-        /// Starts sleeping the lights.
-        /// Calls the event after it has finished
+        /// Starts Sleep, specifying how much to delay by, and completion event handler
         /// </summary>
-        /// <param name="sleepFinishedEventHandler"></param>
-        /// <param name="interval">How long between each decrement to wait before decrementing again</param>
-        public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_ms, int interval)
+        /// <param name="sleepFinishedEventHandler">Handler to be notified on Sleep finishing</param>
+        /// <param name="delayBeforeStarting_m">How long to delay by</param>
+        public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_m)
         {
-            // TODO:- Should we get the interval outselves? SHould it be total duration?
+            var maxValue = _channels.Where(c => c.Pin == LightPin.WarmWhite).First();
+            int interval = maxValue.CurrentValue;
+
             CleanUpSleepTimersAndHandlers();
             _sleepFinishedEvent = sleepFinishedEventHandler;
 

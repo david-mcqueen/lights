@@ -12,6 +12,15 @@ namespace server.Models
 
         private LightPin _lightPin;
 
+        public int CurrentValue
+        {
+            get
+            {
+                return _currentValue;
+            }
+        }
+
+
         public LightPin Pin => _lightPin;
 
         public Channel()
