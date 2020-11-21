@@ -49,17 +49,15 @@ namespace server.Models
         /// <summary>
         /// Given a duration, return the interval (ms) to turn the lights off
         /// </summary>
-        /// <param name="duration">How long to take before reaching zero (minutes)</param>
+        /// <param name="duration_m">How long to take before reaching zero (minutes)</param>
         /// <returns></returns>
-        public int GetIntervalToSleep(int duration)
+        public int GetIntervalToSleep(int duration_m)
         {
-
-            var duration_S = duration * 60;
+            var duration_S = duration_m * 60;
             var seconds = (double)duration_S / (double)_currentValue;
             var ms = seconds * 1000;
 
             return (int)Math.Round(ms, 0);
-                
         }
 
         public bool SetChannelToMaxValue()
