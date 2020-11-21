@@ -17,5 +17,15 @@ namespace server.Test
         {
             Assert.AreEqual(expected, min.MinutesToMS());
         }
+
+
+        [TestCase(1, 60)]
+        [TestCase(10, 600)]
+        [TestCase(5, 300)]
+        [TestCase(2, 120)]
+        public void WhenMinutesToSExtensionCalled_GivenMinuteInput_ThenCorrectSValueIsReturned(int min, int expected)
+        {
+            Assert.AreEqual(expected, min.MinutesToS());
+        }
     }
 }

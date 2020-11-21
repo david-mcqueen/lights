@@ -1,5 +1,6 @@
 using server.Enums;
 using server.Services;
+using server.Utilities;
 using System;
 
 namespace server.Models
@@ -48,7 +49,7 @@ namespace server.Models
         /// <returns></returns>
         public int GetIntervalToSleep(int duration_m)
         {
-            var duration_S = duration_m * 60;
+            var duration_S = duration_m.MinutesToS();
             var seconds = (double)duration_S / (double)_currentValue;
             var ms = seconds * 1000;
 

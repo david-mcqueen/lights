@@ -10,5 +10,10 @@ namespace server.Utilities
         {
             return minutes * 60 * 1000;
         }
+
+        public static int MinutesToS(this int minutes)
+        {
+            return minutes * 60;
+        }
     }
 }
