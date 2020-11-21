@@ -5,7 +5,7 @@ using System.Text;
 
 namespace server
 {
-    interface ILightController
+    public interface ILightController
     {
         bool SetLightValue(LightPin pin, int pctValue);
 
