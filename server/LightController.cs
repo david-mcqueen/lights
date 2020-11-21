@@ -77,11 +77,6 @@ namespace server
             sleepDelayTimer.Start();
         }
 
-        public int MinutesToMS(int minutes)
-        {
-            return minutes * 60 * 1000; 
-        }
-
         private void OnSleepStart(int interval)
         {
             _sleepTimer = new Timer(interval);

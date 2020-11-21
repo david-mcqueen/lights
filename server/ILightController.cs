@@ -10,7 +10,6 @@ namespace server
         bool SetLightValue(LightPin pin, int pctValue);
 
         bool TurnOff();
-        int MinutesToMS(int minutes);
 
         void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_m);
 

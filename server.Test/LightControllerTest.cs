@@ -2,6 +2,7 @@ using Moq;
 using NUnit.Framework;
 using server.Enums;
 using server.Services;
+using server.Utilities;
 using System;
 
 namespace server.Test
@@ -98,7 +99,7 @@ namespace server.Test
 
             var controller = new LightController(mock.Object);
 
-            Assert.AreEqual(expected, controller.MinutesToMS(minutes));
+            Assert.AreEqual(expected, minutes.MinutesToMS());
         }
     }
 }
