@@ -71,7 +71,7 @@ namespace server.Models
             return SetChannelValue(value);
         }
 
-        public virtual bool SetChannelValue(int value)
+        public bool SetChannelValue(int value)
         {
             if (value > _maxValue || value < 0)
             {
