@@ -3,14 +3,14 @@ using server.Services;
 using server.Utilities;
 using System;
 
-namespace server.Models
+namespace server.Channel
 {
-    public class Channel: IChannel
+    public class LightChannel: IChannel
     {
         private readonly ICLIService _service;
         private int _currentValue;
         private readonly int _maxValue = 255;
-        public LightPin Pin { get; }
+        public LightPin Pin { get; set; }
 
         public int CurrentValue
         {
@@ -20,14 +20,13 @@ namespace server.Models
             }
         }
 
-        public Channel()
+        public LightChannel()
         {
             _currentValue = 0;
         }
 
-        public Channel(LightPin pin, ICLIService service)
+        public LightChannel(ICLIService service)
         {
-            Pin = pin;
             _service = service;
             _currentValue = 0;
         }

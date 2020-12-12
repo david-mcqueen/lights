@@ -1,7 +1,7 @@
 using Moq;
 using NUnit.Framework;
 using server.Enums;
-using server.Models;
+using server.Channel;
 using server.Services;
 
 namespace server.Test
@@ -21,9 +21,12 @@ namespace server.Test
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
             
-            var controller = new Channel(LightPin.WarmWhite, mock.Object);
+            var chnl = new LightChannel(mock.Object) 
+            {
+                Pin = LightPin.WarmWhite
+            };
 
-            Assert.IsTrue(controller.SetChannelValuePct(pctValue));
+            Assert.IsTrue(chnl.SetChannelValuePct(pctValue));
             
             mock.Verify(m => m.ExecuteCommand($"pigs p 17 {value}"), Times.Once);
         }
@@ -33,14 +36,17 @@ namespace server.Test
         {
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
-            
-            var controller = new Channel(LightPin.WarmWhite, mock.Object);
 
-            Assert.IsTrue(controller.IncrementBrightness());
-            Assert.IsTrue(controller.IncrementBrightness());
-            Assert.IsTrue(controller.IncrementBrightness());
-            Assert.IsTrue(controller.IncrementBrightness());
-            Assert.IsTrue(controller.IncrementBrightness());
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
+
+            Assert.IsTrue(chnl.IncrementBrightness());
+            Assert.IsTrue(chnl.IncrementBrightness());
+            Assert.IsTrue(chnl.IncrementBrightness());
+            Assert.IsTrue(chnl.IncrementBrightness());
+            Assert.IsTrue(chnl.IncrementBrightness());
             
             mock.Verify(m => m.ExecuteCommand($"pigs p 17 1"), Times.Once);
             mock.Verify(m => m.ExecuteCommand($"pigs p 17 2"), Times.Once);
@@ -54,16 +60,19 @@ namespace server.Test
         {
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
-            
-            var controller = new Channel(LightPin.WarmWhite, mock.Object);
 
-            controller.SetChannelValue(255);
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
 
-            Assert.IsTrue(controller.DecrementBrightness());
-            Assert.IsTrue(controller.DecrementBrightness());
-            Assert.IsTrue(controller.DecrementBrightness());
-            Assert.IsTrue(controller.DecrementBrightness());
-            Assert.IsTrue(controller.DecrementBrightness());
+            chnl.SetChannelValue(255);
+
+            Assert.IsTrue(chnl.DecrementBrightness());
+            Assert.IsTrue(chnl.DecrementBrightness());
+            Assert.IsTrue(chnl.DecrementBrightness());
+            Assert.IsTrue(chnl.DecrementBrightness());
+            Assert.IsTrue(chnl.DecrementBrightness());
             
             mock.Verify(m => m.ExecuteCommand($"pigs p 17 254"), Times.Once);
             mock.Verify(m => m.ExecuteCommand($"pigs p 17 253"), Times.Once);
@@ -77,11 +86,14 @@ namespace server.Test
         {
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
-            
-            var controller = new Channel(LightPin.WarmWhite, mock.Object);
-            
-            Assert.IsFalse(controller.SetChannelValue(-1));
-            Assert.IsFalse(controller.DecrementBrightness());
+
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
+
+            Assert.IsFalse(chnl.SetChannelValue(-1));
+            Assert.IsFalse(chnl.DecrementBrightness());
             
             mock.Verify(m => m.ExecuteCommand(It.IsAny<string>()), Times.Never());
         }
@@ -91,9 +103,12 @@ namespace server.Test
         {
             var mock = new Mock<ICLIService>();
             mock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
-            
-            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
-            
+
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
+
             // Set it to be highest possible value
             Assert.IsTrue(chnl.SetChannelValue(255));
             mock.Invocations.Clear();
@@ -110,7 +125,11 @@ namespace server.Test
         public void WhenChannelIsMaxValueAndGivenASleepDuration_ThenTheCorrectSleepIntervalIsReturned(int totalSleepDuration_Minutes, int expectedInterval_Seconds)
         {
             var mock = new Mock<ICLIService>();
-            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
+
             chnl.SetChannelToMaxValue();
 
             Assert.AreEqual(expectedInterval_Seconds, chnl.GetIntervalToSleep(totalSleepDuration_Minutes));
@@ -122,7 +141,11 @@ namespace server.Test
         public void WhenChannelIsAtAValueAndGivenASleepDuration_ThenTheCorrectSleepIntervalIsReturned(int currentValue, int totalSleepDuration_Minutes, int expectedInterval_Seconds)
         {
             var mock = new Mock<ICLIService>();
-            var chnl = new Channel(LightPin.WarmWhite, mock.Object);
+            var chnl = new LightChannel(mock.Object)
+            {
+                Pin = LightPin.WarmWhite
+            };
+
             chnl.SetChannelValue(currentValue);
 
             Assert.AreEqual(expectedInterval_Seconds, chnl.GetIntervalToSleep(totalSleepDuration_Minutes));

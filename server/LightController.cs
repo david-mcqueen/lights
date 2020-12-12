@@ -1,11 +1,10 @@
+using server.Channel;
+using server.Enums;
+using server.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Timers;
-using server.Enums;
-using server.Models;
-using server.Services;
 
 namespace server
 {
@@ -15,15 +14,16 @@ namespace server
     /// </summary>
     public class LightController: ILightController
     {
+        private const int SLEEP_DURATION_MINUTES = 30;
         private Timer _sleepTimer;
         
-        private readonly IEnumerable<Channel> _channels;
+        private readonly IEnumerable<IChannel> _channels;
         public LightController(ICLIService service)
         {
-            _channels = new List<Channel>()
+            _channels = new List<IChannel>()
             {
-                new Channel(LightPin.CoolWhite, service),
-                new Channel(LightPin.WarmWhite, service)
+                ChannelFactory.GetChannelForPin(service, LightPin.CoolWhite),
+                ChannelFactory.GetChannelForPin(service, LightPin.WarmWhite)
             };
         }
         /// <summary>
@@ -61,15 +61,15 @@ namespace server
         public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_m)
         {
             var maxValue = _channels.Where(c => c.Pin == LightPin.WarmWhite).First();
-            int interval = maxValue.CurrentValue;
+            int interval = maxValue.GetIntervalToSleep(SLEEP_DURATION_MINUTES);
 
             CleanUpSleepTimersAndHandlers();
             _sleepFinishedEvent = sleepFinishedEventHandler;
 
-            var sleepDelayTimer = new Timer(MinutesToMS(delayBeforeStarting_m));
+            var sleepDelayTimer = new Timer(interval);
             sleepDelayTimer.Elapsed += (sender, args) =>
             {
-                OnSleepStart(interval);
+                OnSleepStart(1);
                 sleepDelayTimer.Dispose();
             };
 
