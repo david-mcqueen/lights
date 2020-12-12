@@ -1,5 +1,6 @@
 using server.Channel;
 using server.Enums;
+using server.Scheduler;
 using server.Services;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,21 @@ namespace server
     /// </summary>
     public class LightController: ILightController
     {
-        private const int SLEEP_DURATION_MINUTES = 30;
         private Timer _sleepTimer;
         
         private readonly IEnumerable<IChannel> _channels;
-        public LightController(ICLIService service)
+        private readonly IScheduleManager _scheduleManager;
+
+        public LightController(ICLIService service, IScheduleManager scheduleManager)
         {
             _channels = new List<IChannel>()
             {
                 ChannelFactory.GetChannelForPin(service, LightPin.CoolWhite),
                 ChannelFactory.GetChannelForPin(service, LightPin.WarmWhite)
             };
+            this._scheduleManager = scheduleManager;
+
+            this._scheduleManager.Epoch += SleepEpoch;
         }
         /// <summary>
         /// Given a value, set that on the light
@@ -51,59 +56,28 @@ namespace server
             return success;
         }
 
-        private event EventHandler _sleepFinishedEvent;
-
         /// <summary>
         /// Starts Sleep, specifying how much to delay by, and completion event handler
         /// </summary>
-        /// <param name="sleepFinishedEventHandler">Handler to be notified on Sleep finishing</param>
-        /// <param name="delayBeforeStarting_m">How long to delay by</param>
-        public void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_m)
+        /// <param name="sleepDurationMinutes">How long the sleep process should take</param>
+        public void Sleep(int sleepDurationMinutes)
         {
-            var maxValue = _channels.Where(c => c.Pin == LightPin.WarmWhite).First();
-            int interval = maxValue.GetIntervalToSleep(SLEEP_DURATION_MINUTES);
+            var coolChannel = _channels.Where(c => c.Pin == LightPin.CoolWhite).First();
+            var warmChannel = _channels.Where(c => c.Pin == LightPin.WarmWhite).First();
 
-            CleanUpSleepTimersAndHandlers();
-            _sleepFinishedEvent = sleepFinishedEventHandler;
+            coolChannel.TurnOff();
 
-            var sleepDelayTimer = new Timer(interval);
-            sleepDelayTimer.Elapsed += (sender, args) =>
+            int interval = warmChannel.GetIntervalToSleep(sleepDurationMinutes);
+
+            _scheduleManager.Start(interval);
+        }
+
+        private void SleepEpoch(object sender, EventArgs args)
+        {
+            if (!_channels.Where(c => c.Pin == LightPin.WarmWhite).First().DecrementBrightness())
             {
-                OnSleepStart(1);
-                sleepDelayTimer.Dispose();
-            };
-
-            sleepDelayTimer.AutoReset = false;
-            sleepDelayTimer.Start();
-        }
-
-        private void OnSleepStart(int interval)
-        {
-            _sleepTimer = new Timer(interval);
-            _sleepTimer.Elapsed += (sender, args) =>
-            {
-                // Every epoch, decrement brightness. Then stop sleeping
-                if (!_channels.All(c => c.DecrementBrightness()))
-                {
-                    _sleepTimer.Stop();
-                    OnSleepFinished(EventArgs.Empty);
-                }
-            };
-            
-            _sleepTimer.AutoReset = true;
-            _sleepTimer.Start();
-        }
-
-        private void OnSleepFinished(EventArgs e)
-        {
-            _sleepFinishedEvent?.Invoke(this, e);
-            CleanUpSleepTimersAndHandlers();
-        }
-
-        private void CleanUpSleepTimersAndHandlers()
-        {
-            _sleepTimer?.Dispose();
-            _sleepFinishedEvent = null;
+                _scheduleManager.Stop();
+            }
         }
 
         public void WakeUp(EventHandler wakeupFinishedEventHandler)

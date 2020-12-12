@@ -11,7 +11,7 @@ namespace server
 
         bool TurnOff();
 
-        void Sleep(EventHandler sleepFinishedEventHandler, int delayBeforeStarting_m);
+        void Sleep(int sleepDurationMinutes);
 
         void WakeUp(EventHandler wakeupFinishedEventHandler);
     }
