@@ -9,6 +9,7 @@ namespace server.Test
     public class ChannelTest
     {
 
+        [TestCase(0, "0")]
         [TestCase(1, "2")]
         [TestCase(10, "25")]
         [TestCase(20, "51")]
@@ -94,7 +95,9 @@ namespace server.Test
 
             Assert.IsFalse(chnl.SetChannelValue(-1));
             Assert.IsFalse(chnl.DecrementBrightness());
-            
+
+            Assert.AreEqual(0, chnl.CurrentValue);
+
             mock.Verify(m => m.ExecuteCommand(It.IsAny<string>()), Times.Never());
         }
         
@@ -115,6 +118,8 @@ namespace server.Test
 
             Assert.IsFalse(chnl.SetChannelValue(256));
             Assert.IsFalse(chnl.IncrementBrightness());
+
+            Assert.AreEqual(255, chnl.CurrentValue);
             
             mock.Verify(m => m.ExecuteCommand(It.IsAny<string>()), Times.Never());
         }

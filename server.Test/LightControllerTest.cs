@@ -35,9 +35,11 @@ namespace server.Test
             
             var controller = new LightController(mock.Object);
             
-            Assert.IsTrue((controller.SetLightValue(LightPin.CoolWhite, 17)));
+            Assert.IsTrue(controller.SetLightValue(LightPin.CoolWhite, 17));
+            Assert.IsTrue(controller.SetLightValue(LightPin.WarmWhite, 10));
             
             mock.Verify(m => m.ExecuteCommand("pigs p 22 17"), Times.Once);
+            mock.Verify(m => m.ExecuteCommand("pigs p 17 10"), Times.Once);
         }
 
 
