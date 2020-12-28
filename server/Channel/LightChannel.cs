@@ -91,6 +91,11 @@ namespace server.Channel
 
         public bool TurnOff()
         {
+            if (_currentValue <= 0)
+            {
+                return false;
+            }
+
             var command = Commands.TURN_CHANNEL_OFF.Replace(Constants.FILLPOINT_CHANNEL_NUMBER, ((int)Pin).ToString());
 
             var result = _service.ExecuteCommand(command);

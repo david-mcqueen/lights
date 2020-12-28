@@ -9,5 +9,6 @@ namespace server.Scheduler
         public event EventHandler<EventArgs> Epoch;
         void Start(int interval);
         void Stop();
+        void StartWithDelay(int delay, int interval);
     }
 }

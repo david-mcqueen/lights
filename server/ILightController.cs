@@ -13,6 +13,8 @@ namespace server
 
         void Sleep(int sleepDurationMinutes);
 
+        void SleepWithDelay(int sleepDurationMinutes, int delayMinutes);
+
         void WakeUp(EventHandler wakeupFinishedEventHandler);
     }
 }

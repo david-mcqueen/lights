@@ -26,6 +26,7 @@ namespace server.Test
             _scheduleManagerMock = new Mock<IScheduleManager>(MockBehavior.Strict);
             _scheduleManagerMock.Setup(m => m.Start(It.IsAny<int>()));
             _scheduleManagerMock.Setup(m => m.Stop());
+            _scheduleManagerMock.Setup(m => m.StartWithDelay(It.IsAny<int>(), It.IsAny<int>()));
         }
 
         [TearDown]
@@ -39,6 +40,9 @@ namespace server.Test
         public void AsAUser_IWantToBeAbleToTurnTheLightsOffInstantly()
         {
             var controller = new LightController(_cliMock.Object, _scheduleManagerMock.Object);
+
+            controller.SetLightValue(LightPin.WarmWhite, 1);
+            controller.SetLightValue(LightPin.CoolWhite, 1);
 
             Assert.IsTrue(controller.TurnOff());
             _cliMock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Once);
@@ -79,16 +83,29 @@ namespace server.Test
             _scheduleManagerMock.Verify(s => s.Stop());
         }
 
-        [Test]
-        public void AsAUser_IWantToBeAbleToSetAnAlarmForTheLightsToTurnOnAtADefinedTime()
+        [TestCase(30, 30)]
+        public void AsAUser_IWantToBeAbleToSleepTheLightsAfterADelay(int sleepDuration, int sleepDelay)
         {
-            
+            var controller = new LightController(_cliMock.Object, _scheduleManagerMock.Object);
+            controller.SetLightValue(LightPin.CoolWhite, 1);
+            controller.SetLightValue(LightPin.WarmWhite, 1);
+
+            controller.SleepWithDelay(sleepDuration, sleepDelay);
+
+            _scheduleManagerMock.Verify(s => s.StartWithDelay(sleepDuration, sleepDelay));
+
+            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
+            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
+
+            _cliMock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
+            _cliMock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
+
+            _scheduleManagerMock.Verify(s => s.Stop());
         }
 
         [Test]
-        public void AsAUser_IWantToBeAbleToSleepTheLightsAfterADelay()
+        public void AsAUser_IWantToBeAbleToSetAnAlarmForTheLightsToTurnOnAtADefinedTime()
         {
-
         }
     }
 }

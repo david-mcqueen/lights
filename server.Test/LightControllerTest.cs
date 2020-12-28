@@ -24,7 +24,10 @@ namespace server.Test
             var scheduleManagerMock = new Mock<IScheduleManager>(MockBehavior.Strict);
 
             var controller = new LightController(mock.Object, scheduleManagerMock.Object);
-            
+
+            controller.SetLightValue(LightPin.WarmWhite, 1);
+            controller.SetLightValue(LightPin.CoolWhite, 1);
+
             Assert.IsTrue(controller.TurnOff());
             mock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Once);
             mock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Once);

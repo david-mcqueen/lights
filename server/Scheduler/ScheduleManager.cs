@@ -8,6 +8,7 @@ namespace server.Scheduler
     {
         public event EventHandler<EventArgs> Epoch;
 
+
         public void Start(int interval)
         {
             throw new NotImplementedException();
@@ -15,6 +16,12 @@ namespace server.Scheduler
 
         public void Stop()
         {
+            throw new NotImplementedException();
+        }
+
+        public void StartWithDelay(int delay, int interval)
+        {
+            // After the delay, call `Start(interval);`
             throw new NotImplementedException();
         }
     }

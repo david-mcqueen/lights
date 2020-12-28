@@ -88,8 +88,20 @@ namespace server
             _scheduleManager.Start(interval);
         }
 
+        /// <summary>
+        /// Waits for the delay period, and then starts the Sleep process
+        /// </summary>
+        /// <param name="sleepDurationMinutes"></param>
+        /// <param name="delayMinutes"></param>
+        public void SleepWithDelay(int sleepDurationMinutes, int delayMinutes)
+        {
+            _scheduleManager.StartWithDelay(delayMinutes, sleepDurationMinutes);
+        }
+
         private void SleepEpoch(object sender, EventArgs args)
         {
+            _channels.Where(c => c.Pin == LightPin.CoolWhite).First().TurnOff();
+
             if (!_channels.Where(c => c.Pin == LightPin.WarmWhite).First().DecrementBrightness())
             {
                 _scheduleManager.Stop();
