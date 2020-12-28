@@ -6,23 +6,45 @@ namespace server.Scheduler
 {
     public class ScheduleManager : IScheduleManager
     {
+        private SleepWithDelayTimer _startWithDelayTimer;
+        private System.Timers.Timer _sleepTimer;
+
         public event EventHandler<EventArgs> Epoch;
 
 
         public void Start(int interval)
         {
-            throw new NotImplementedException();
+            _sleepTimer = new System.Timers.Timer(interval);
+            _sleepTimer.Elapsed += new System.Timers.ElapsedEventHandler(Epoch);
+            _sleepTimer.AutoReset = true;
+            _sleepTimer.Start();
         }
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            if (_sleepTimer != null)
+            {
+                _sleepTimer.Stop();
+                _sleepTimer.Dispose();
+            }
         }
 
         public void StartWithDelay(int delay, int interval)
         {
-            // After the delay, call `Start(interval);`
-            throw new NotImplementedException();
+            _startWithDelayTimer = new SleepWithDelayTimer(delay);
+            _startWithDelayTimer.SleepInterval = interval;
+            _startWithDelayTimer.Elapsed += startWithDelayEvent;
+            _startWithDelayTimer.AutoReset = false;
+            _startWithDelayTimer.Start();
+        }
+
+        private void startWithDelayEvent(object sender, EventArgs args)
+        {
+            SleepWithDelayTimer timer = (SleepWithDelayTimer)sender;
+            Start(timer.SleepInterval);
+
+            _startWithDelayTimer.Stop();
+            _startWithDelayTimer.Dispose();
         }
     }
 }
