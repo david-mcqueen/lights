@@ -8,6 +8,7 @@ using System;
 
 namespace server.Test
 {
+    [TestFixture]
     public class LightControllerTest
     {
         [SetUp]
@@ -63,7 +64,7 @@ namespace server.Test
             scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
 
             cliMock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
-            cliMock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
+            cliMock.Verify(m => m.ExecuteCommand("pigs p 17 1"), Times.Exactly(1));
 
             scheduleManagerMock.Verify(s => s.Stop());
 

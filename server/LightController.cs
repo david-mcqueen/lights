@@ -31,6 +31,7 @@ namespace server
 
             this._scheduleManager.Epoch += SleepEpoch;
         }
+
         /// <summary>
         /// Given a value, set that on the light
         /// </summary>
@@ -44,6 +45,21 @@ namespace server
             }
             
             return channel.SetChannelValue(pctValue);
+        }
+
+        /// <summary>
+        /// Given a value, set that on the light
+        /// </summary>
+        public bool SetLightValuePct(LightPin pin, int pctValue)
+        {
+            var channel = _channels.First(c => c.Pin == pin);
+
+            if (channel == null)
+            {
+                return false;
+            }
+
+            return channel.SetChannelValuePct(pctValue);
         }
 
         /// <summary>
