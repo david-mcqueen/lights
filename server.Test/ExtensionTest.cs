@@ -6,6 +6,7 @@ using System.Text;
 
 namespace server.Test
 {
+    [TestFixture]
     class ExtensionTest
     {
         [TestCase(1, 60000)]

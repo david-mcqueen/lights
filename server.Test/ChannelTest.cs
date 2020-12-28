@@ -6,6 +6,7 @@ using server.Services;
 
 namespace server.Test
 {
+    [TestFixture]
     public class ChannelTest
     {
 
