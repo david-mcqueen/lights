@@ -29,7 +29,8 @@ namespace server
             };
             this._scheduleManager = scheduleManager;
 
-            this._scheduleManager.Epoch += SleepEpoch;
+            this._scheduleManager.SleepEpoch += SleepEpoch;
+            this._scheduleManager.WakeEpoch += WakeEpoch;
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace server
 
             int interval = warmChannel.GetIntervalToSleep(sleepDurationMinutes);
 
-            _scheduleManager.Start(interval);
+            _scheduleManager.StartSleep(interval);
         }
 
         /// <summary>
@@ -104,13 +105,30 @@ namespace server
 
             if (!_channels.Where(c => c.Pin == LightPin.WarmWhite).First().DecrementBrightness())
             {
-                _scheduleManager.Stop();
+                _scheduleManager.StopTimers();
             }
         }
 
-        public void WakeUp(EventHandler wakeupFinishedEventHandler)
+        public void WakeUp(int wakeDuration)
         {
-            throw new NotImplementedException();
+            _scheduleManager.StartWake(wakeDuration);
+        }
+
+        private void WakeEpoch(object sender, EventArgs args)
+        {
+            var channelsChanged = 0;
+
+            _channels.ToList().ForEach(c =>
+            {
+                if (c.IncrementBrightness())
+                    channelsChanged++;
+            });
+
+            // Only stop the process if non of the channels changed
+            if (channelsChanged == 0)
+            {
+                _scheduleManager.StopTimers();
+            }
         }
     }
 }

@@ -24,8 +24,8 @@ namespace server.Test
             _cliMock.Setup(m => m.ExecuteCommand(It.IsAny<string>())).Returns("");
 
             _scheduleManagerMock = new Mock<IScheduleManager>(MockBehavior.Strict);
-            _scheduleManagerMock.Setup(m => m.Start(It.IsAny<int>()));
-            _scheduleManagerMock.Setup(m => m.Stop());
+            _scheduleManagerMock.Setup(m => m.StartSleep(It.IsAny<int>()));
+            _scheduleManagerMock.Setup(m => m.StopTimers());
             _scheduleManagerMock.Setup(m => m.StartWithDelay(It.IsAny<int>(), It.IsAny<int>()));
         }
 
@@ -74,13 +74,13 @@ namespace server.Test
             controller.SetLightValue(LightPin.WarmWhite, 1);
 
             controller.Sleep(30);
-            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
-            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
+            _scheduleManagerMock.Raise(s => s.SleepEpoch += null, EventArgs.Empty);
+            _scheduleManagerMock.Raise(s => s.SleepEpoch += null, EventArgs.Empty);
 
             _cliMock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
             _cliMock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
 
-            _scheduleManagerMock.Verify(s => s.Stop());
+            _scheduleManagerMock.Verify(s => s.StopTimers());
         }
 
         [TestCase(30, 30)]
@@ -94,18 +94,18 @@ namespace server.Test
 
             _scheduleManagerMock.Verify(s => s.StartWithDelay(sleepDuration, sleepDelay));
 
-            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
-            _scheduleManagerMock.Raise(s => s.Epoch += null, EventArgs.Empty);
+            _scheduleManagerMock.Raise(s => s.SleepEpoch += null, EventArgs.Empty);
+            _scheduleManagerMock.Raise(s => s.SleepEpoch += null, EventArgs.Empty);
 
             _cliMock.Verify(m => m.ExecuteCommand("pigs p 22 0"), Times.Exactly(1));
             _cliMock.Verify(m => m.ExecuteCommand("pigs p 17 0"), Times.Exactly(1));
 
-            _scheduleManagerMock.Verify(s => s.Stop());
+            _scheduleManagerMock.Verify(s => s.StopTimers());
         }
 
         [Test]
         public void AsAUser_IWantToBeAbleToSetAnAlarmForTheLightsToTurnOnAtADefinedTime()
-        {
+        {   
         }
     }
 }

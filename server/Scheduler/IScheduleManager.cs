@@ -6,9 +6,11 @@ namespace server.Scheduler
 {
     public interface IScheduleManager
     {
-        public event EventHandler<EventArgs> Epoch;
-        void Start(int interval);
-        void Stop();
+        public event EventHandler<EventArgs> SleepEpoch;
+        public event EventHandler<EventArgs> WakeEpoch;
+        void StartSleep(int interval);
         void StartWithDelay(int delay, int interval);
+        void StartWake(int interval);
+        void StopTimers();
     }
 }
