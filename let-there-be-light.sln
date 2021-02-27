@@ -1,8 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "server", "server\server.csproj", "{370E678F-6DEE-4EA0-A30F-80F804FE3DFF}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "server", "server\server.csproj", "{370E678F-6DEE-4EA0-A30F-80F804FE3DFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "server.Test", "server.Test\server.Test.csproj", "{DABA2777-53CD-4A69-AF3C-45427891EC77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "server.Test", "server.Test\server.Test.csproj", "{DABA2777-53CD-4A69-AF3C-45427891EC77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{311B61B7-DDE1-4F39-A46C-545490EF98C6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{370E678F-6DEE-4EA0-A30F-80F804FE3DFF} = {370E678F-6DEE-4EA0-A30F-80F804FE3DFF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +26,15 @@ Global
 		{DABA2777-53CD-4A69-AF3C-45427891EC77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DABA2777-53CD-4A69-AF3C-45427891EC77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DABA2777-53CD-4A69-AF3C-45427891EC77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{311B61B7-DDE1-4F39-A46C-545490EF98C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311B61B7-DDE1-4F39-A46C-545490EF98C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311B61B7-DDE1-4F39-A46C-545490EF98C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311B61B7-DDE1-4F39-A46C-545490EF98C6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D29978A0-B575-4E10-B9BF-0067A6472A4C}
 	EndGlobalSection
 EndGlobal
